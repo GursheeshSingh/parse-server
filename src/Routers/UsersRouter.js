@@ -85,10 +85,13 @@ export class UsersRouter extends ClassesRouter {
         .find('_User', query)
         .then(results => {
           if (!results.length) {
-            throw new Parse.Error(
-              Parse.Error.OBJECT_NOT_FOUND,
-              'Invalid username/password.'
-            );
+            if (email && username) {
+              throw new _node.default.Error(_node.default.Error.OBJECT_NOT_FOUND, 'Username/Email not found.');
+            } else if (email) {
+              throw new _node.default.Error(_node.default.Error.EMAIL_NOT_FOUND, 'Email not found.');
+            } else {
+              throw new _node.default.Error(_node.default.Error.OBJECT_NOT_FOUND, 'User not found.');
+            }
           }
 
           if (results.length > 1) {
@@ -112,7 +115,7 @@ export class UsersRouter extends ClassesRouter {
           if (!isValidPassword) {
             throw new Parse.Error(
               Parse.Error.OBJECT_NOT_FOUND,
-              'Invalid username/password.'
+              'Invalid password.'
             );
           }
           // Ensure the user isn't locked out
